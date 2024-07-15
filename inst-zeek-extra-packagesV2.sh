@@ -53,7 +53,7 @@ $zkgbin install geoip-conn --force
 #/root/.zkg/clones/package
 #or /root/.local/pipx/venvs/zkg/clones/packages
 echo installing Malcolm zeek plugins
-wget https://raw.githubusercontent.com/cisagov/Malcolm/793abad1417ba06e3dbd4b4be628875504388e82/shared/bin/zeek_install_plugins.sh -o zeek_install_plugins.sh
+wget "https://raw.githubusercontent.com/cisagov/Malcolm/793abad1417ba06e3dbd4b4be628875504388e82/shared/bin/zeek_install_plugins.sh"
 bash ./zeek_install_plugins.sh
 echo fixing ja4 erronous package ja4 or missing dep
 $zkgbin remove ja4 --force
