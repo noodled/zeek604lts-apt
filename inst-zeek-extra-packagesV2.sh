@@ -34,6 +34,9 @@ sudo apt-get install -y pipx
 # /root/.local/pipx/venvs/zkg/bin/zkg
 cat /etc/os-release | grep -e'UBUNTU_CODENAME=focal' && export zkgbin=/root/.local/bin/zkg
 cat /etc/os-release | grep -e'UBUNTU_CODENAME=jammy' && export zkgbin=/root/.local/pipx/venvs/zkg/bin/zkg
+cat /etc/os-release | grep -e'UBUNTU_CODENAME=noble' && export zkgbin=/root/.local/pipx/venvs/zkg/bin/zkg
+cat /etc/os-release | grep -e'VERSION_CODENAME=bookworm' && export zkgbin=/root/.local/pipx/venvs/zkg/bin/zkg
+cat /etc/os-release | grep -e'VERSION_CODENAME=bullseye' && export zkgbin=/root/.local/pipx/venvs/zkg/bin/zkg
 #####python3 -m pipx install zpkg
 python3 -m pipx install zkg
 echo installing zkg IRC-Zeek-package
