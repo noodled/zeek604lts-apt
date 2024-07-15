@@ -7,7 +7,9 @@ pushd libpcap-1.10.4
 ./configure && make && sudo make install && popd
 echo installing zeek LTS from source
 sudo apt-get install -y cmake make gcc g++ flex bison libpcap-dev \
-	python-dev swig zlib1g-dev libssl-dev locate
+	python-dev swig zlib1g-dev libssl-dev locate python3-dev
+ldconfig
+ldconfig -ldl
 wget https://download.zeek.org/zeek-6.0.4.tar.gz
 #updatedb
 tar xzvf zeek-6.0.4.tar.gz
@@ -26,6 +28,8 @@ source ~/.profile
 sudo apt-get install -y python3-git python3-semantic-version
 
 sudo apt-get install -y libfl-dev locate
+ldconfig
+ldconfig -ldl
 updatedb
 #export FLEX_INCLUDE_DIR=/usr/lib/x86_64-linux-gnu/
 export locFlexLib=$(locate libfl.so | cut -d' ' -f1 | head -1)
@@ -42,7 +46,7 @@ sudo setcap cap_net_raw,cap_net_admin=eip /usr/local/zeek/bin/zeek
 sudo setcap cap_net_raw,cap_net_admin=eip /usr/local/zeek/bin/zeekctl
 sudo chown mdka -R /usr/local/zeek
 sudo chgrp mdka -R /usr/local/zeek
-echo just supply install in ZeekControl 
+echo just supply install in ZeekControl
 echo then cron enable  and finally start
 pushd /usr/local/zeek/bin/
 
@@ -60,8 +64,8 @@ ExecStop=/usr/local/zeek/bin/zeekctl stop
 WantedBy=multi-user.target
 EOF
 
-sudo ./zeekctl install
-sudo ./zeekctl cron enable
+sudo /usr/local/zeek/bin/zeekctl install
+sudo /usr/local/zeek/bin/zeekctl cron enable
 echo getting default interface to adapt zeek node cfg
 #ip link | grep -e'MULTICAST' | grep -e'[0-9]:.*: ' | cut -d' ' -f2 | cut -d':' -f1
 export DEFAULTif=$(route | grep '^default' | grep -o '[^ ]*$')
@@ -69,13 +73,21 @@ echo changing default eth0 in node.cfg to this system default interface $DEFAULT
 sed -i 's/eth0/'"${DEFAULTif}"'/' /usr/local/zeek/etc/node.cfg
 echo changing zeek log rotation from hourly to daily
 sed 's@LogRotationInterval = 3600@LogRotationInterval = 86400@' /usr/local/zeek/etc/zeekctl.cfg
-zeek zeekctl check
+/usr/local/zeek/bin/zeekctl check
+/usr/local/zeek/bin/zeekctl deploy
 sudo systemctl restart zeek.service
 
-./zeekctl start
+/usr/local/zeek/bin/zeekctl start
 sudo systemctl daemon-reload
 sudo systemctl start zeek.service && sudo systemctl status zeek.service | grep -e'Running' && sudo systemctl enable zeek.service
 sudo systemctl status zeek.service | grep -e'Running'
+
 #zeekctl
 sudo systemctl status zeek | grep -e'Running'
+sudo systemctl daemon-reload
+sudo systemctl start zeek
+sleep 4
+sudo systemctl start zeek
+sudo systemctl status zeek
+sudo  systemctl enable --now zeek
 #https://medium.com/@josejgp/setting-up-snort-and-zeek-on-raspberry-pi-first-part-b1e036332ebc
